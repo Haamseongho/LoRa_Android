@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="kakao_app_key">be4a95db669c6162683994031ad9673e</string>
+    <string name="client_secret">2QGpGtLLdj8p7EJaVPE3RwbPOTaJ19UA</string>
 </resources>

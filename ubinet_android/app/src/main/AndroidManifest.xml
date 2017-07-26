@@ -2,23 +2,35 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.haams.myapplication">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".login.kakao.GlobalApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="be4a95db669c6162683994031ad9673e" />
+
+        <meta-data
+            android:name="com.kakao.sdk.ClientSecret"
+            android:value="2QGpGtLLdj8p7EJaVPE3RwbPOTaJ19UA" />
+
+        <activity android:name=".MainActivity" />
+        <activity android:name=".sub_activities.HealthActivity" />
+        <activity android:name=".sub_activities.MapActivity" />
+        <activity android:name=".sub_activities.MapTrackActivity" />
+        <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".sub_activities.HealthActivity" />
-        <activity android:name=".sub_activities.MapActivity" />
-        <activity android:name=".sub_activities.MapTrackActivity" />
-        <activity android:name=".IntroActivity"></activity>
+        <activity android:name=".SignUpActivity"></activity>
     </application>
 
 </manifest>

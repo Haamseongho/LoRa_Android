@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 
+import com.example.haams.myapplication.IntroActivity;
 import com.example.haams.myapplication.R;
 import com.example.haams.myapplication.sub_activities.HealthActivity;
 import com.example.haams.myapplication.sub_activities.MapActivity;
@@ -18,6 +19,12 @@ public class BtnClicked implements View.OnClickListener {
     private String Ltid;
     private static final String TAG = "BtnClicked";
     private Context context;
+    private IntroActivity iActivity;
+
+    public BtnClicked(Context context) {
+        this.context = context;
+        iActivity = new IntroActivity();
+    }
 
     public BtnClicked(Context context, String sLtid) {
         this.context = context;
@@ -47,7 +54,6 @@ public class BtnClicked implements View.OnClickListener {
                 s2Intent.putExtra("Ltid",Ltid);
                 context.startActivity(s2Intent);
                 break;
-
 
         }
     }
