@@ -3,7 +3,6 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
@@ -14,7 +13,6 @@ buildscript {
 }
 
 allprojects {
-    buildDir = "F:/final_project_for_dependentChild/final_project_android_for_dependentChild\$MyApplication/MyApplication"
     repositories {
         jcenter()
     }

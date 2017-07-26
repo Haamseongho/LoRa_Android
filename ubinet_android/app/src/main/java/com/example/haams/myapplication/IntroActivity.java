@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.example.haams.myapplication.s_data.Admin;
+import com.example.haams.myapplication.data.Admin;
 import com.example.haams.myapplication.server.Network;
 
 import retrofit2.Call;
@@ -26,7 +26,6 @@ public class IntroActivity extends AppCompatActivity {
     private static final String TAG = "IntroActivity";
     private Intent sIntent;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,13 +34,13 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        edtLtid = (EditText)findViewById(R.id.edtLtid);
-        edtPassword = (EditText)findViewById(R.id.edtPassWord);
-        btnSignUp = (Button)findViewById(R.id.btnLogin);
+        edtLtid = (EditText) findViewById(R.id.edtLtid);
+        edtPassword = (EditText) findViewById(R.id.edtPassWord);
+        btnSignUp = (Button) findViewById(R.id.btnLogin);
 
         Glide.with(this).load(R.drawable.ubinet_img3)
                 .skipMemoryCache(true)
-                .fitCenter().into((ImageView)findViewById(R.id.mBanner));
+                .fitCenter().into((ImageView) findViewById(R.id.mBanner));
 
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
@@ -59,10 +58,10 @@ public class IntroActivity extends AppCompatActivity {
                 , new Callback<Admin>() {
                     @Override
                     public void onResponse(Call<Admin> call, Response<Admin> response) {
-                        if(response.isSuccessful()){
-                            Log.d(TAG,response.body().toString());
-                            sIntent = new Intent(IntroActivity.this,MainActivity.class);
-                            sIntent.putExtra("Ltid",response.body().getLtid());
+                        if (response.isSuccessful()) {
+                            Log.d(TAG, response.body().toString());
+                            sIntent = new Intent(IntroActivity.this, MainActivity.class);
+                            sIntent.putExtra("Ltid", response.body().getLtid());
                             sIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(sIntent);
                         }
@@ -70,7 +69,7 @@ public class IntroActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<Admin> call, Throwable t) {
-                        Log.e(TAG,t.toString());
+                        Log.e(TAG, t.toString());
                     }
                 });
     }

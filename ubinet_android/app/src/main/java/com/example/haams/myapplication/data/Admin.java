@@ -1,4 +1,4 @@
-package com.example.haams.myapplication.s_data;
+package com.example.haams.myapplication.data;
 
 /**
  * Created by haams on 2017-06-29.

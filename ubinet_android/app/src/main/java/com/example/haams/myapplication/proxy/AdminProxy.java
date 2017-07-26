@@ -1,6 +1,6 @@
 package com.example.haams.myapplication.proxy;
 
-import com.example.haams.myapplication.s_data.Admin;
+import com.example.haams.myapplication.data.Admin;
 import com.example.haams.myapplication.server.Service;
 
 import retrofit2.Call;

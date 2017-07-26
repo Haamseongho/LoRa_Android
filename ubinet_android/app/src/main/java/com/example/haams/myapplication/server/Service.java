@@ -1,6 +1,6 @@
 package com.example.haams.myapplication.server;
 
-import com.example.haams.myapplication.s_data.Admin;
+import com.example.haams.myapplication.data.Admin;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
