@@ -7,14 +7,14 @@
 <hr /> 
 # 1.  서비스 개요
 
--  부양자녀들이 사용할 모바일 어플리케이션으로 주요 기능은 
+▷  부양자녀들이 사용할 모바일 어플리케이션으로 주요 기능은 
    디바이스 착용자의 현 위치와 전체 이동 경로 Tracking이 가능하다.
-   
- 개인 정보를 부양자녀에게 노출시킬 것을 동의한다면 진행할 부분입니다.
+   
+▶ 개인 정보를 부양자녀에게 노출시킬 것을 동의한다면 진행할 부분입니다.
+----------------------------------------------------------------------------------------------------------------
+▷ QR코드 인식을 통하여 환자 정보와 맞는 처방전을 제공해준다.
 
--  QR코드 인식을 통하여 환자 정보와 맞는 처방전을 제공해준다.
-
- 사용자 입장에서는 처방전을 빠르게 따로 받아볼 수 있고 번거로움을 덜어낼 수 있습니다. 
+▶ 사용자 입장에서는 처방전을 빠르게 따로 받아볼 수 있고 번거로움을 덜어낼 수 있습니다. 
    또한 의사와 약사 입장에서는 쉽게 처방전을 주고 받음으로써 환자 및 투약을 필요로 하는
    사람들에게 빠른 처방이 가능합니다.
 
@@ -48,9 +48,53 @@ Sns 활용 로그인 api : SNS( KakaoTalk / Facebook / Google ) (https://haamseo
 <hr />
 
 
+# 5. 사용 라이브러리
 
-# 5.  라이센스
+Download
+--------
+
+Download [the latest JAR][2] or grab via Maven:
+```xml
+<dependency>
+  <groupId>com.squareup.retrofit2</groupId>
+  <artifactId>retrofit</artifactId>
+  <version>2.3.0</version>
+</dependency>
 ```
-Retrofit 
+or Gradle:
+```groovy
+compile 'com.squareup.retrofit2:retrofit:2.3.0'
+```
+
+Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
+
+Retrofit requires at minimum Java 7 or Android 2.3.
+
+
+ProGuard
+--------
+
+If you are using ProGuard you might need to add the following options:
+```
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+```
+
+
+# 6.  라이센스
+```
+Copyright 2013 Square, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```
 
