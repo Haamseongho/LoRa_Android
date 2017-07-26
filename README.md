@@ -57,8 +57,6 @@ Sns 활용 로그인 api : SNS( KakaoTalk / Facebook / Google ) (https://haamseo
 
 Download
 --------
-
-Download [the latest JAR][2] or grab via Maven:
 ```xml
 <dependency>
   <groupId>com.squareup.retrofit2</groupId>
