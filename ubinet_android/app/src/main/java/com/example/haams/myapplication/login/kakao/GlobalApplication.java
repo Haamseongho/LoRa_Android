@@ -10,6 +10,8 @@ import com.kakao.auth.IApplicationConfig;
 import com.kakao.auth.ISessionConfig;
 import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.KakaoSDK;
+import com.kakao.auth.Session;
+import com.facebook.*;
 
 /**
  * Created by haams on 2017-07-26.
@@ -39,6 +41,12 @@ public class GlobalApplication extends Application {
         instance = this;
         KakaoSDK.init(new KakaoSDKAdapter());
     }
+
+    private static class FacebookSDKAdapter extends FacebookActivity{
+
+    }
+
+
     private static class KakaoSDKAdapter extends KakaoAdapter{
         // KakaoSDKAdapter는 Kakao와 관련된 SDK를 Application과 접목시켜 활용하고자
         // 사용하는 클래스입니다. 이는 KakaoAdapter를 상속받아 진행됩니다.

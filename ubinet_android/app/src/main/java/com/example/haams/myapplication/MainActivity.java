@@ -9,17 +9,24 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.haams.myapplication.events.BtnClicked;
+import com.facebook.GraphRequest;
 import com.kakao.auth.ErrorCode;
 import com.kakao.network.ErrorResult;
 import com.kakao.usermgmt.UserManagement;
 import com.kakao.usermgmt.callback.MeResponseCallback;
 import com.kakao.usermgmt.response.model.UserProfile;
 
+import org.json.JSONObject;
+
+import okhttp3.internal.Util;
+
 public class MainActivity extends AppCompatActivity {
     private Intent gIntent;
     private String sLtid;
     private static final String TAG = "MainActivity";
     private TextView profile_id,nickname;
+    private JSONObject json;
+    GraphRequest getRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         profile_id = (TextView)findViewById(R.id.profile_id);
         nickname = (TextView)findViewById(R.id.nickname);
         gIntent = getIntent();
+
+        Log.i(TAG,gIntent.getStringExtra("name")+"/"+gIntent.getStringExtra("email")+'/'+gIntent.getStringExtra("gender"));
 
         Glide.with(this)
                 .load(gIntent.getStringExtra("image"))

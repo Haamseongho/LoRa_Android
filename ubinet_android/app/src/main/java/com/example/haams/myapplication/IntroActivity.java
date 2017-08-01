@@ -10,49 +10,98 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.example.haams.myapplication.data.Admin;
-import com.example.haams.myapplication.events.BtnClicked;
-import com.example.haams.myapplication.server.Network;
-import com.kakao.auth.ErrorCode;
-import com.kakao.auth.Session;
-import com.kakao.network.ErrorResult;
-import com.kakao.usermgmt.UserManagement;
-import com.kakao.usermgmt.callback.MeResponseCallback;
-import com.kakao.usermgmt.response.model.UserProfile;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.kakao.auth.ISessionCallback;
+import com.kakao.auth.Session;
 import com.kakao.util.exception.KakaoException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.Arrays;
 
 public class IntroActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button btnSignUp;
     private static final String TAG = "IntroActivity";
+    private FirebaseInstanceIdService firebaseInstanceIdService;
+    private LoginButton btnFacebookLogin;
+    private Intent fIntent;
     /*
     Session 관리
      */
     private SessionCallback callback; // -- KAkao ISession
-
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-
-
-        findViewById(R.id.btn_kakao_login).setOnClickListener(this);
         getSessionCallback();
+        initViews();
     }
+
+    private void initViews() {
+        firebaseInstanceIdService = new FirebaseInstanceIdService();
+        findViewById(R.id.btn_kakao_login).setOnClickListener(this);
+        btnFacebookLogin = (LoginButton)findViewById(R.id.btn_facebook_login);
+
+        callbackManager = CallbackManager.Factory.create();
+        // Facebook callbackManager
+        btnFacebookLogin.setReadPermissions(Arrays.asList("public_profile","email"));
+        // 로그인 할 경우에 보여줄 퍼미션 설정 (public_profile : 기본 프로필 전부 ,  email : 이메일
+        btnFacebookLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(final LoginResult loginResult) {
+                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        Log.i("facebook_login",object.toString());
+                        try {
+                            String name = object.getString("name");
+                            String email = object.getString("email");
+                            String gender = object.getString("gender");
+                            fIntent = new Intent(IntroActivity.this,MainActivity.class);
+                            fIntent.putExtra("name",name);
+                            fIntent.putExtra("email",email);
+                            fIntent.putExtra("gender",gender);
+                            startActivity(fIntent);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                Bundle bundle = new Bundle();
+                bundle.putString("fields","id,name,email,gender,birthday");
+                graphRequest.setParameters(bundle);
+                graphRequest.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.e("facebook_login_error",error.toString());
+            }
+        });
+    }
+
+
 
     private void getSessionCallback() {
         Log.i(TAG, "세션시작");
@@ -81,6 +130,8 @@ public class IntroActivity extends AppCompatActivity implements View.OnClickList
         }
         callback = new SessionCallback();
         Session.getCurrentSession().addCallback(callback);
+
+
     }
 
     private class SessionCallback implements ISessionCallback {
@@ -110,6 +161,7 @@ public class IntroActivity extends AppCompatActivity implements View.OnClickList
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode,resultCode,data);
     }
 
     @Override
@@ -124,6 +176,7 @@ public class IntroActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.btn_kakao_login:
                 Log.d("BtnClicked", "클릭은되냐?");
+                firebaseInstanceIdService.onTokenRefresh();
                 startActivity(new Intent(IntroActivity.this, SignUpActivity.class));
                 break;
         }
