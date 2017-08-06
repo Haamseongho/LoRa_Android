@@ -1,4 +1,4 @@
-package com.example.haams.myapplication.login.kakao;
+package com.example.haams.myapplication.sign_up;
 
 import android.app.Activity;
 import android.app.Application;
@@ -10,7 +10,6 @@ import com.kakao.auth.IApplicationConfig;
 import com.kakao.auth.ISessionConfig;
 import com.kakao.auth.KakaoAdapter;
 import com.kakao.auth.KakaoSDK;
-import com.kakao.auth.Session;
 import com.facebook.*;
 
 /**

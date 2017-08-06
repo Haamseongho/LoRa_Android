@@ -5,11 +5,11 @@ import android.os.Bundle;
 
 import com.example.haams.myapplication.R;
 
-public class HealthActivity extends AppCompatActivity {
+public class MedFormActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_health);
+        setContentView(R.layout.activity_medform);
     }
 }

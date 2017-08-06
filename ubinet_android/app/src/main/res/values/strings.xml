@@ -4,5 +4,8 @@
     <string name="client_secret">2QGpGtLLdj8p7EJaVPE3RwbPOTaJ19UA</string>
     <string name="facebook_app_id">1489945794382557</string>
     <string name="fb_login_protocol_scheme">fb1489945794382557</string>
-
+    <string name="btn_medicate">투약 정보 알림</string>
+    <string name="btn_spot">위치 정보 알림</string>
+    <string name="btn_spot_noew">현재 위치 알림</string>
+    <string name="btn_spot_track">오늘 경로 알림</string>
 </resources>

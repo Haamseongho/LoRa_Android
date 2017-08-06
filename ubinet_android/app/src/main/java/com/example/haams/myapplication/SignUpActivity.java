@@ -60,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
         final Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
         Log.i(TAG,result.toString());
         intent.putExtra("nickname", result.getNickname());
-        intent.putExtra("id", result.getId());
+        intent.putExtra("id", result.getServiceUserId());
         intent.putExtra("image", result.getProfileImagePath());
         startActivity(intent);
         finish();
