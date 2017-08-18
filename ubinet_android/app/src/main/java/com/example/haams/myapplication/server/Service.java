@@ -1,6 +1,10 @@
 package com.example.haams.myapplication.server;
 
 import com.example.haams.myapplication.data.Admin;
+import com.example.haams.myapplication.data.MedForm;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -20,5 +24,15 @@ public interface Service {
     public Call<Admin> signUpWithLtid(
             @Field("Ltid") String Ltid,
             @Field("Password") String Password
+    );
+
+    @FormUrlEncoded
+    @POST("/medform/insert")
+    public Call<MedForm> setMedFormDataToServer(
+            @Field("medName") String medName,
+            @Field("alarmHour") ArrayList<Integer> alarmHour,
+            @Field("alarmMin") ArrayList<Integer> alarmMin,
+            @Field("startDate") Date startDate,
+            @Field("endDate") Date endDate
     );
 }

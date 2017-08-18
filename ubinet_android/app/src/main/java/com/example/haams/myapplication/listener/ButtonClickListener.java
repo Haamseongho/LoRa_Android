@@ -3,13 +3,16 @@ package com.example.haams.myapplication.listener;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TimePicker;
 
 import com.example.haams.myapplication.IntroActivity;
 import com.example.haams.myapplication.R;
 import com.example.haams.myapplication.SignUpActivity;
+import com.example.haams.myapplication.adapters.MedFormAdapter;
 import com.example.haams.myapplication.data.MedForm;
+import com.example.haams.myapplication.sub_activities.MedFormActivity;
 
 import java.util.ArrayList;
 
@@ -26,6 +29,7 @@ public class ButtonClickListener implements View.OnClickListener {
     private IndexSendMsg indexingMsg;
     private ArrayList<MedForm> medFormList;
     private int position;
+    private MedFormActivity mfActivity;
 
     public ButtonClickListener(Context context) {
         this.context = context;
@@ -35,6 +39,7 @@ public class ButtonClickListener implements View.OnClickListener {
         this.context = context;
         this.medFormList = medFormList;
         this.position = position;
+        mfActivity = new MedFormActivity();
     }
 
     @Override
@@ -64,7 +69,6 @@ public class ButtonClickListener implements View.OnClickListener {
 
 
     private void setMedAlarm(Context context, ArrayList<MedForm> medFormList, int position) {
-        final TimePicker timePicker = new TimePicker(this.context);
 
     }
 

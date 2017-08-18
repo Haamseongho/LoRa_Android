@@ -18,8 +18,8 @@ public class AdminProxy {
         service = retrofit.create(Service.class);
     }
 
-    public void signUpWithLtid(String Ltid , String Password , Callback<Admin> callback){
-        Call<Admin> call = service.signUpWithLtid(Ltid,Password);
+    public void signUpWithLtid(String Ltid, String Password, Callback<Admin> callback) {
+        Call<Admin> call = service.signUpWithLtid(Ltid, Password);
         call.enqueue(callback);
     }
 }

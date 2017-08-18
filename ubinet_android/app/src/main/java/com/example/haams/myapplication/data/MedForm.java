@@ -1,5 +1,6 @@
 package com.example.haams.myapplication.data;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -8,12 +9,12 @@ import java.util.Date;
 
 public class MedForm {
     private String medName;   // 약 명칭
-    private int[] alarmHour; // 알림 시
-    private int[] alarmMin; // 알림 분
+    private ArrayList<Integer> alarmHour; // 알림 시
+    private ArrayList<Integer> alarmMin; // 알림 분
     private Date startDate; // 복용 시작 날짜
     private Date endDate;   // 복용 종료 날짜
 
-    public MedForm(String medName, int[] alarmHour, int[] alarmMin, Date startDate, Date endDate) {
+    public MedForm(String medName, ArrayList<Integer> alarmHour, ArrayList<Integer> alarmMin, Date startDate, Date endDate) {
         this.medName = medName;
         this.alarmHour = alarmHour;
         this.alarmMin = alarmMin;
@@ -21,21 +22,15 @@ public class MedForm {
         this.endDate = endDate;
     }
 
-    public MedForm(String medName, int[] alarmHour, int[] alarmMin) {
-        this.medName = medName;
-        this.alarmHour = alarmHour;
-        this.alarmMin = alarmMin;
-    }
-
     public String getMedName() {
         return medName;
     }
 
-    public int[] getAlarmHour() {
+    public ArrayList<Integer> getAlarmHour() {
         return alarmHour;
     }
 
-    public int[] getAlarmMin() {
+    public ArrayList<Integer> getAlarmMin() {
         return alarmMin;
     }
 
@@ -45,25 +40,5 @@ public class MedForm {
 
     public Date getEndDate() {
         return endDate;
-    }
-
-    public void setMedName(String medName) {
-        this.medName = medName;
-    }
-
-    public void setAlarmHour(int[] alarmHour) {
-        this.alarmHour = alarmHour;
-    }
-
-    public void setAlarmMin(int[] alarmMin) {
-        this.alarmMin = alarmMin;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 }

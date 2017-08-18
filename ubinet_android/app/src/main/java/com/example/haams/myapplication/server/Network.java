@@ -1,6 +1,7 @@
 package com.example.haams.myapplication.server;
 
 import com.example.haams.myapplication.proxy.AdminProxy;
+import com.example.haams.myapplication.proxy.MedProxy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -16,9 +17,11 @@ public class Network {
     public static Network network;
     private Retrofit retrofit;
     private AdminProxy adminProxy;
+    private MedProxy medProxy;
 
-    public static Network getNetworkInstance(){
-        if(network == null){
+
+    public static Network getNetworkInstance() {
+        if (network == null) {
             network = new Network();
         }
         return network;
@@ -33,9 +36,14 @@ public class Network {
                 .client(httpClient.build()).build();
 
         adminProxy = new AdminProxy(retrofit);
+        medProxy = new MedProxy(retrofit);
     }
 
     public AdminProxy getAdminProxy() {
         return adminProxy;
+    }
+
+    public MedProxy getMedProxy() {
+        return medProxy;
     }
 }
