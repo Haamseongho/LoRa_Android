@@ -3,7 +3,6 @@ package com.example.haams.myapplication.sub_activities;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,24 +15,16 @@ import android.util.Log;
 
 import com.example.haams.myapplication.R;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.gson.reflect.TypeToken;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.services.android.navigation.v5.MapboxNavigation;
+import com.mapbox.services.android.telemetry.location.LocationEngine;
+import com.mapbox.services.commons.models.Position;
 import com.mapbox.services.commons.utils.TextUtils;
-import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
-import com.pubnub.api.callbacks.SubscribeCallback;
-import com.pubnub.api.models.consumer.PNStatus;
-import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
-import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,13 +33,11 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class MapTrackActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, OnMapReadyCallback, com.google.android.gms.maps.OnMapReadyCallback {
+public class MapTrackActivity extends AppCompatActivity implements com.google.android.gms.maps.OnMapReadyCallback, OnMapReadyCallback {
 
     private GoogleMap gMap;
     private static final String TAG = "MapTrackActivity";
@@ -59,33 +48,79 @@ public class MapTrackActivity extends AppCompatActivity implements GoogleApiClie
     private ArrayList<LatLng> mPoints = new ArrayList<>();
     private static final String channel = "test-channel-0.33636080802927126";
     private GoogleApiClient mGoogleApiClient;
-    private MapView mapView;
+    private com.mapbox.mapboxsdk.maps.MapView mapView;
     private MapboxMap mapBoxMap;
-
+    private MapboxNavigation navigation;
+    private LocationEngine locationEngine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Mapbox.getInstance(this, getString(R.string.MapBox_Access_token));
+         navigation = new MapboxNavigation(this,getString(R.string.MapBox_Access_token));
         setContentView(R.layout.activity_map_track);
+        mapView = (com.mapbox.mapboxsdk.maps.MapView)findViewById(R.id.mapView);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(MapTrackActivity.this);
 
-        initMap(savedInstanceState);
-        initPubNun();
-       /* SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+
+        //initPubNun();
+       /* SupportMapFragment mapFragm ent = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapTrack);*/
-        this.buildGoogleApiClient();
-        mGoogleApiClient.connect();
+
         checkPermissionMap();
 
     }
+    /*
+     Log.i(TAG+"지도입니다.",origin+"/"+destination);
+                MapboxDirectionsMatrix client = new MapboxDirectionsMatrix.Builder()
+                        .setAccessToken(getString(R.string.MapBox_Access_token))
+                        .setProfile(DirectionsCriteria.PROFILE_WALKING)
+                        .setOrigin(origin).setDestination(destination)
+                        .build();
 
-    private void initMap(Bundle savedInstanceState) {
-        Mapbox.getInstance(this, getString(R.string.MapBox_Access_token));
-        setContentView(R.layout.activity_main);
-        mapView = (MapView) findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
+                client.enqueueCall(new Callback<DirectionsMatrixResponse>() {
+                    @Override
+                    public void onResponse(Call<DirectionsMatrixResponse> call, Response<DirectionsMatrixResponse> response) {
+                        Log.i(TAG,"client response well");
+                        if(response.isSuccessful()){
+                            Log.i(TAG,call.toString());
 
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<DirectionsMatrixResponse> call, Throwable t) {
+                        Log.e(TAG,t.toString());
+                    }
+                });
+     */
+
+    private void initMapboxDirection() {
+
+        final MapboxNavigation navigation = new MapboxNavigation(this,getString(R.string.MapBox_Access_token));
+
+        final Position origin = Position.fromLngLat(36.2827,127.2381);
+        final Position destination = Position.fromLngLat(37.1290,127.4328);
+
+       /* navigation.addProgressChangeListener(new ProgressChangeListener() {
+            @Override
+            public void onProgressChange(Location location, RouteProgress routeProgress) {
+                Log.i(TAG,location.getLatitude()+"/"+location.getLongitude());
+            }
+        });*/
+       /* navigation.getRoute(origin, destination, new Callback<DirectionsResponse>() {
+            @Override
+            public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+            }
+
+            @Override
+            public void onFailure(Call<DirectionsResponse> call, Throwable t) {
+
+            }
+        });*/
     }
+
 
     @Override
     public void onStart() {
@@ -129,12 +164,6 @@ public class MapTrackActivity extends AppCompatActivity implements GoogleApiClie
         mapView.onSaveInstanceState(outState);
     }
 
-    private void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this).addApi(LocationServices.API)
-                .build();
-    }
-
 
     private void checkPermissionMap() {
         startLocationService();
@@ -173,93 +202,22 @@ public class MapTrackActivity extends AppCompatActivity implements GoogleApiClie
     }
 
     @Override
-    public void onConnected(Bundle bundle) {
-        LocationRequest mLocationRequest = createLocationRequest();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this
-        );
-    }
-
-    private LocationRequest createLocationRequest() {
-        LocationRequest mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        return mLocationRequest;
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d(TAG, "Connection to Google API suspended");
-    }
-
-    @Override
     public void onMapReady(MapboxMap mapboxMap) {
-        this.mapBoxMap = mapBoxMap;
-        new DrawGeoJson().execute();
+        this.mapBoxMap = mapboxMap;
+
+        initMapboxDirection();
+        //new DrawGeoJson().execute();
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
+      /*  googleMap.addMarker(new MarkerOptions().position(new LatLng(37.53421, 128.241324)).title("현재 위치").snippet("현재 위치"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.53421, 128.241324), 16));
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(16));*/
     }
+
 
     // LocationListener --> 여기서 받은 lat,lon --> PubNub channel에 Broadcast할 것.
-
-
-    private class GPSListener implements LocationListener {
-
-        @Override
-        public void onLocationChanged(Location location) {
-            lat = location.getLatitude();
-            lon = location.getLongitude();
-            broadcastLocation(location);
-            // gps로 위도 경도 불러온 것
-        }
-
-        private void broadcastLocation(Location location) {
-            JSONObject message = new JSONObject();
-
-            try {
-                message.put("lat", location.getLatitude());
-                message.put("lon", location.getLongitude());
-                message.put("alt", location.getAltitude());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-
-            //  mPubNub.publish("Channel_name",message,publishCallback);
-
-
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    }
-
     private void checkDangerousPermissions() {
         String[] permissions = {
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -304,35 +262,6 @@ public class MapTrackActivity extends AppCompatActivity implements GoogleApiClie
         }
     }
 
-    private void initPubNun() {
-        // mPubNub = new Pubnub(PUBLISH_KEY,SUBSCRIBE_KEY);
-        PNConfiguration config = new PNConfiguration();
-        config.setPublishKey(PUBLISH_KEY);
-        config.setSubscribeKey(SUBSCRIBE_KEY);
-        config.setSecure(true);
-        this.mPubNub = new PubNub(config);
-
-        this.mPubNub.addListener(new SubscribeCallback() {
-            @Override
-            public void status(PubNub pubnub, PNStatus status) {
-
-            }
-
-            @Override
-            public void message(PubNub pubnub, PNMessageResult message) {
-                Type type = new TypeToken<Map<String, String>>() {
-                }.getType();
-                Map<String, String> myMap;
-            }
-
-            @Override
-            public void presence(PubNub pubnub, PNPresenceEventResult presence) {
-
-            }
-        });
-    }
-
-
     private class DrawGeoJson extends AsyncTask<Void, Void, List<LatLng>> {
         @Override
         protected List<LatLng> doInBackground(Void... voids) {
@@ -341,7 +270,7 @@ public class MapTrackActivity extends AppCompatActivity implements GoogleApiClie
 
             try {
                 // Load GeoJSON file
-                InputStream inputStream = getAssets().open("example.geojson");
+                InputStream inputStream = getAssets().open("");
                 BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
                 StringBuilder sb = new StringBuilder();
                 int cp;
@@ -386,6 +315,7 @@ public class MapTrackActivity extends AppCompatActivity implements GoogleApiClie
             if (points.size() > 0) {
 
                 // Draw polyline on map
+                Log.i(TAG+"/"+"Points" , String.valueOf(points));
                 mapBoxMap.addPolyline(new com.mapbox.mapboxsdk.annotations.PolylineOptions())
                         .addPoint((com.mapbox.mapboxsdk.geometry.LatLng) points);
                /* mapBoxMap.addPolyline(new PolylineOptions()
@@ -395,4 +325,52 @@ public class MapTrackActivity extends AppCompatActivity implements GoogleApiClie
             }
         }
     }
+
+    /*
+    GPSListener
+     */
+
+    private class GPSListener implements LocationListener {
+
+        @Override
+        public void onLocationChanged(Location location) {
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+            broadcastLocation(location);
+            // gps로 위도 경도 불러온 것
+        }
+
+        private void broadcastLocation(Location location) {
+            JSONObject message = new JSONObject();
+
+            try {
+                message.put("lat", location.getLatitude());
+                message.put("lon", location.getLongitude());
+                message.put("alt", location.getAltitude());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            //  mPubNub.publish("Channel_name",message,publishCallback);
+
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    }
+
 }

@@ -63,6 +63,17 @@ dependencies {
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:5.1.2@aar') {
         transitive=true
     }
+    /*
+    mapboxsdk
+     */
+    compile 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.4.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-java-core:2.2.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-java-geojson:2.2.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-java-services:2.2.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-java-services-rx:2.2.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-android-services:2.2.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-android-telemetry:2.2.0'
+    compile 'com.mapbox.mapboxsdk:mapbox-android-ui:2.2.0'
 
     compile group: 'com.pubnub', name: 'pubnub-gson', version: '4.9.1'
 }
