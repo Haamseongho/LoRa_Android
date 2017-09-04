@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.haams.myapplication">
 
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -18,7 +21,6 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-
     <application
         android:name=".sign_up.GlobalApplication"
         android:allowBackup="true"
@@ -26,6 +28,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver android:name=".sms.SmsBroadCast">
+            <intent-filter android:priority="9999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="be4a95db669c6162683994031ad9673e" />
@@ -36,12 +44,10 @@
             android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
             android:value="true" />
 
-
         <!-- 구글 맵 -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_map_api_key" />
@@ -83,9 +89,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".sub_activities.MapTrackActivity"></activity>
+        <activity android:name=".sub_activities.MapTrackActivity" />
+        <activity android:name=".sms.CheckAuthNumber"></activity>
     </application>
-
-
 
 </manifest>

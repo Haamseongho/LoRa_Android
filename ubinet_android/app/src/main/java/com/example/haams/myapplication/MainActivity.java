@@ -10,10 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.haams.myapplication.data.Guard;
+import com.example.haams.myapplication.data.User;
 import com.example.haams.myapplication.listener.ButtonClickListener;
 import com.example.haams.myapplication.listener.IndexSendMsg;
+import com.example.haams.myapplication.server.Network;
 import com.example.haams.myapplication.sign_up.TokenStorage;
+import com.example.haams.myapplication.sms.GuardNameStorage;
 import com.example.haams.myapplication.sub_activities.MapActivity;
 import com.example.haams.myapplication.sub_activities.MapTrackActivity;
 import com.example.haams.myapplication.sub_activities.MedFormActivity;
@@ -21,6 +26,9 @@ import com.example.haams.myapplication.sub_activities.MedFormActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private Intent gIntent;
@@ -30,6 +38,15 @@ public class MainActivity extends AppCompatActivity {
     private Intent mIntent = null;
     private AlertDialog.Builder mDlg;
     private EditText edtLTID;
+
+    /*
+    유저 이름 가지고 오기
+    입력한 전화번호 가지고 오기 --> LTID 받아오기
+    LTID , 유저이름 --> 보호자 DB 저장 (서버)
+     */
+    GuardNameStorage guardNameStorage;
+    Network network;
+
 
     @BindView(R.id.btn_spot_track)
     Button btnSpots;
@@ -42,7 +59,52 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        Toast.makeText(getApplicationContext(), "인증에 성공하였습니다. 위치 정보 확인과 투약 알림을 설정하실 수 있습니다.", Toast.LENGTH_LONG).show();
+        initViews();
+    }
 
+    private void initViews() {
+        guardNameStorage = new GuardNameStorage(this);
+        Log.i(TAG, guardNameStorage.getUserNumber("phone_number") + "//" + guardNameStorage.getUserName("guard_name"));
+        final String phoneNum = guardNameStorage.getUserNumber("phone_number");
+
+        /*
+        전화번호 --> userDB에서 Tel 가지고 오기.
+         */
+        network = Network.getNetworkInstance();
+        network.getUserProxy().getLTIDByTelNum(phoneNum, new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    Log.i(TAG, "전화번호: " + phoneNum + "//" + "LTID: " + response.body().getLTID());
+                    saveUserInfoToGuardDB(response.body().getLTID());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e(TAG, t.toString());
+            }
+        });
+
+    }
+
+    private void saveUserInfoToGuardDB(final String LTID) {
+        final String name = guardNameStorage.getUserName("guard_name");
+        network.getGuardProxy().saveGuardInfoToServer(LTID, name, new Callback<Guard>() {
+            @Override
+            public void onResponse(Call<Guard> call, Response<Guard> response) {
+                if (response.isSuccessful()) {
+                    Log.e(TAG, response.body().getName());
+                    Log.i(TAG, "보호자 데이터베이스 저장 완료: " + LTID + "," + name);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Guard> call, Throwable t) {
+                Log.e(TAG, t.toString());
+            }
+        });
     }
 
     @Override
@@ -51,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         if (existIDInServer()) {
             // MainActivity 보여주기
         } else {
-            checkLTID();
+
         }
 
     }
@@ -64,20 +126,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private void checkLTID() {
-        mDlg = new AlertDialog.Builder(this);
-        final View edtView = LayoutInflater.from(this).inflate(R.layout.activity_edt_ltid, null);
-        edtLTID = (EditText) edtView.findViewById(R.id.edtLTID);
-        mDlg.setTitle("LTID 정보 입력");
-        mDlg.setMessage("확인할 LTID를 입력해주세요");
-        mDlg.setView(edtView);
-        mDlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                matchIDwithLTID(edtLTID.getText().toString());
-            }
-        });
-    }
+
 
     private void matchIDwithLTID(String Ltid) {
         getIntent().getStringExtra("id");
