@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.util.Log;
 import com.example.haams.myapplication.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -30,7 +32,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+
+        initMap();
         checkPermissionMap();
+    }
+
+    private void initMap() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.gMap);
+                MapsInitializer.initialize(MapActivity.this);
+                mapFragment.getMapAsync(MapActivity.this);
+            }
+        }, 1000);
+
+        lat = getIntent().getDoubleExtra("lat", 0.0);
+        lon = getIntent().getDoubleExtra("lng", 0.0);
     }
 
     private void checkPermissionMap() {
@@ -62,8 +81,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 minTime, minDistance, gpsListener);
         android.location.Location lastLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (lastLocation != null) {
-            lon = lastLocation.getLatitude();
-            lat = lastLocation.getLongitude();
+//            lon = lastLocation.getLatitude();
+//            lat = lastLocation.getLongitude();
 
             //   Toast.makeText(getApplicationContext(), "GPS에서 위치를 받지 못하여 최근 위치로 표시합니다. "+ latitude + "\n" + longitude, Toast.LENGTH_SHORT).show();
         }
@@ -73,8 +92,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         @Override
         public void onLocationChanged(Location location) {
-            lat = location.getLatitude();
-            lon = location.getLongitude();
+//            lat = location.getLatitude();
+//            lon = location.getLongitude();
             // gps로 위도 경도 불러온 것
         }
 
@@ -146,8 +165,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setBuildingsEnabled(true);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         Log.i(TAG, String.valueOf(lat) + "/" + String.valueOf(lon));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(37.53421, 128.241324)).title("현재 위치").snippet("현재 위치"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(37.53421, 128.241324), 16));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lon)).title("현재 위치").snippet("현재 위치"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 16));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
         //googleMap.moveCamera(CameraUpdateFactory.newLatLng());
     }

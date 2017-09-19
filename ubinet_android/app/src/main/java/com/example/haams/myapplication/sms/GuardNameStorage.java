@@ -37,4 +37,15 @@ public class GuardNameStorage {
         SharedPreferences pref2 = context.getSharedPreferences("pref2", Context.MODE_PRIVATE);
         return pref2.getString(key, "");
     }
+
+    public void saveUserLTID(String key,String value){
+        SharedPreferences pref3 = context.getSharedPreferences("pref3",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref3.edit();
+        editor.putString(key,value);
+        editor.commit();
+    }
+    public String getUserLTID(String key){
+        SharedPreferences pref3 = context.getSharedPreferences("pref3",Context.MODE_PRIVATE);
+        return pref3.getString(key,"");
+    }
 }

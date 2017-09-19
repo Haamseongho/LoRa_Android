@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private Intent mIntent = null;
     private AlertDialog.Builder mDlg;
     private EditText edtLTID;
+    private boolean checkLocationYN = true;
+    private double lat,lon;
 
     /*
     유저 이름 가지고 오기
@@ -72,12 +74,15 @@ public class MainActivity extends AppCompatActivity {
         전화번호 --> userDB에서 Tel 가지고 오기.
          */
         network = Network.getNetworkInstance();
+        Log.i(TAG, phoneNum);
         network.getUserProxy().getLTIDByTelNum(phoneNum, new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
                     Log.i(TAG, "전화번호: " + phoneNum + "//" + "LTID: " + response.body().getLTID());
                     saveUserInfoToGuardDB(response.body().getLTID());
+                    guardNameStorage.saveUserLTID("LTID", response.body().getLTID()); // LTID 등록 --> 투약 알림 및 위치 정보 체크할 때 사용할 주요 키
+                    // SharedPreference에서 저장한 phoneNum으로 LTID를 찾아온다.
                 }
             }
 
@@ -91,11 +96,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveUserInfoToGuardDB(final String LTID) {
         final String name = guardNameStorage.getUserName("guard_name");
+        Log.i(TAG, name);
+        /*
+        찾아온 LTID와 SharedPreference에서 저장한 name을 가지고 guardianDB에 LTID와 name을 저장한다.
+         */
         network.getGuardProxy().saveGuardInfoToServer(LTID, name, new Callback<Guard>() {
             @Override
             public void onResponse(Call<Guard> call, Response<Guard> response) {
                 if (response.isSuccessful()) {
-                    Log.e(TAG, response.body().getName());
+                    Log.e(TAG, response.body().toString() + "입니다. ");
                     Log.i(TAG, "보호자 데이터베이스 저장 완료: " + LTID + "," + name);
                 }
             }
@@ -127,26 +136,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    private void matchIDwithLTID(String Ltid) {
-        getIntent().getStringExtra("id");
-        /*
-         id값을 가지고 먼저 서버의 데이터베이스에 저장이 되어 있는지 확인을 한다.
-         확인을 한 다음에 해당 아이디가 없을 경우 Ltid를 서버에 넣어 두기
-         확인을 한 다음에 해당 아이디가 있을 경우 LTID를 뽑아오고 이 LTID를 Ltid와 비교한다.
-         같을 경우 Toast메시지 띄우기 (환영메세지)
-         다를 경우 LTID를 다시 설정해주세요 메세지와 함께 checkLTID() 메서드를 다시 수행 (-> LTID 입력 후 아이디에 맞게 Ltid 서버에 넣어 지게 됨 해당 id를 식별자로 하여
-         put하기
-        */
-
-        /*
-        서버 코드 --> SNS로 로그인 할 경우 SNS에서 가져올 정보
-        - ID
-        - Name
-         */
-
-    }
-
     @OnClick({R.id.btn_spot_track, R.id.btn_medicate_form})
     public void mainButtonClick(View v) {
         switch (v.getId()) {
@@ -162,43 +151,75 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void spotInfoChecked() {
-        final AlertDialog.Builder dlg = new AlertDialog.Builder(this);
-        final View spotView = LayoutInflater.from(this).inflate(R.layout.activity_spot_info_check, null);
-        final Button btnSpotNow, btnSpotTrack;
-        btnSpotNow = (Button) spotView.findViewById(R.id.btn_spot_now);
-        btnSpotTrack = (Button) spotView.findViewById(R.id.btn_spot_track);
 
-        btnSpotNow.setOnClickListener(new ButtonClickListener(spotView.getContext()));
-        btnSpotTrack.setOnClickListener(new ButtonClickListener(spotView.getContext()));
+        checkLTIDFirst();
 
-        indexingMsg = new IndexSendMsg(spotView.getContext());
+        if (checkLocationYN) {
+            final AlertDialog.Builder dlg = new AlertDialog.Builder(this);
+            final View spotView = LayoutInflater.from(this).inflate(R.layout.activity_spot_info_check, null);
+            final Button btnSpotNow, btnSpotTrack;
+            btnSpotNow = (Button) spotView.findViewById(R.id.btn_spot_now);
+            btnSpotTrack = (Button) spotView.findViewById(R.id.btn_spot_track);
+
+            btnSpotNow.setOnClickListener(new ButtonClickListener(spotView.getContext()));
+            btnSpotTrack.setOnClickListener(new ButtonClickListener(spotView.getContext()));
+
+            indexingMsg = new IndexSendMsg(spotView.getContext());
 
 
-        dlg.setView(spotView);
-        dlg.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
+            dlg.setView(spotView);
+            dlg.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dlg.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            dialog.dismiss();
+                        }
+                    });
+                }
+            });
 
         /*
         대화상자 --> 인덱스 값 넘기기
         // 위치 정보 or 투약 폼 정리 ( 1 -> 현재 위치 알려주기 / 2 -> 하루 전체 경로 트랙킹)
          */
 
-        dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            dlg.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    checkSpotInfo(indexingMsg.getPreferences("index"));
+                }
+            });
+            dlg.show();
+        } else {
+            Toast.makeText(MainActivity.this, "사용자 정보와 기기 LTID 정보가 다르기 때문에 위치 정보를 받아볼 수 없습니다.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void checkLTIDFirst() {
+        String LTID = guardNameStorage.getUserLTID("LTID");
+        network = Network.getNetworkInstance();
+        network.getUserProxy().sendLTIDToServerForDynamicData(LTID, new Callback<User>() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                checkSpotInfo(indexingMsg.getPreferences("index"));
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    Log.i(TAG, "사용자 정보 LTID와 DynamicData - LTID 비교");
+                    checkLocationYN = true;
+                    /*
+                     두 LTID가 일치할 경우 사용자 정보 갱신 lat,lon,pulse <-- by ThingPlug // 조건 완성
+                     upLink 데이터로 갱신하기 때문에 (업링크 - LTID , lat ,lon ,pulse
+                     안드로이드 클라이언트 단에서는 요청 및 응답할 내용이 없습니다.
+                    */
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e(TAG, t.toString());
+                checkLocationYN = false; // 사용자 정보와 동적 데이터의 LTID가 일치하지 않는다면 지도를 보여줄 의미가 없기 때문에 실패로 빠질 경우 지도 실행 시작 하지 않는다.
             }
         });
-        dlg.show();
     }
 
     private void checkSpotInfo(int index) {
@@ -207,7 +228,10 @@ public class MainActivity extends AppCompatActivity {
         정보를 식별하여 위치 정보를 불러온다.
          */
         if (index == 1) {
+            getLatLngByServer();
             mIntent = new Intent(MainActivity.this, MapActivity.class);
+            mIntent.putExtra("lat",lat);
+            mIntent.putExtra("lng",lon);
             Log.i(TAG, "현재 위치");
         } else if (index == 2) {
             mIntent = new Intent(MainActivity.this, MapTrackActivity.class);
@@ -216,6 +240,30 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "인덱싱 에러(맵)");
         }
         startActivity(mIntent);
+    }
+
+    private void getLatLngByServer() {
+        /*
+        MapActivity로 이동하기 전 LTID 정보를 가지고 lat,lon 정보를 뽑아서 넘기기.
+         */
+        String LTID = guardNameStorage.getUserLTID("LTID");
+        network = Network.getNetworkInstance();
+        network.getUserProxy().getLatLngByLTIDFromServer(LTID, new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()){
+                    // 사용자 정보 중 위도 / 경도 전송
+                    Log.i(TAG,response.body().toString()+" \n 사용자 정보입니다.");
+                    lat = response.body().getLat();
+                    lon = response.body().getLon();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.e(TAG,t.toString());
+            }
+        });
     }
 
     private void medicateInfoChecked() {

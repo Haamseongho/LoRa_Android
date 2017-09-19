@@ -23,4 +23,16 @@ public class UserProxy {
         Call<User> call = service.getUserPhoneNumber(tel);
         call.enqueue(callback);
     }
+
+    public void sendLTIDToServerForDynamicData(String LTID,Callback<User> callback){
+        Call<User> call = service.sendLTIDToServer(LTID);
+        call.enqueue(callback);
+    }
+    // -- User 정보 / Dynamic 정보 (LTID) 비교
+
+    public void getLatLngByLTIDFromServer(String LTID,Callback<User> callback){
+        Call<User> call = service.getLatLngByLTIDFromServer(LTID);
+        call.enqueue(callback);
+    }
+    // -- LTID 정보로 user의 lat,lon 뽑아오기
 }

@@ -36,7 +36,7 @@
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
-            android:value="be4a95db669c6162683994031ad9673e" />
+            android:value="3ddf9aec22d66f2c82b8ab510d62d517" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />

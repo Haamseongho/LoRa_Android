@@ -21,8 +21,8 @@ public class MedProxy {
         service = retrofit.create(Service.class);
     }
 
-    public void setMedFormDataToServer(String medName, ArrayList<Integer> hours, ArrayList<Integer> minutes, Date startDate, Date endDate , Callback<MedForm> callback) {
-        Call<MedForm> call = service.setMedFormDataToServer(medName,hours,minutes,startDate,endDate);
+    public void setMedFormDataToServer(String LTID,String medName, ArrayList<Integer> hours, ArrayList<Integer> minutes, Date startDate, Date endDate , Callback<MedForm> callback) {
+        Call<MedForm> call = service.setMedFormDataToServer(LTID,medName,hours,minutes,startDate,endDate);
         call.enqueue(callback);
     }
 }

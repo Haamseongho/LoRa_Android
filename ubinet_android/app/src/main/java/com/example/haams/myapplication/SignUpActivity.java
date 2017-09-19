@@ -88,7 +88,7 @@ public class SignUpActivity extends AppCompatActivity {
         this.userProfile = result;
 
         guardNameStorage = new GuardNameStorage(this);
-        guardNameStorage.saveUserName("guard_name",result.getNickname());
+        guardNameStorage.saveUserName("guard_name", result.getNickname());
         // 카카오 계정으로 로그인 시에 이름 뽑아서 저장하기.
 
         // 매핑
@@ -110,7 +110,7 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "핸드폰 번호의 양식에 맞게 다시 입력해주세요.", Toast.LENGTH_LONG).show();
         } else {
             Log.i(TAG, "휴대폰 패턴 인증 완료");
-            guardNameStorage.saveUserNumber("phone_number",sNum);
+            guardNameStorage.saveUserNumber("phone_number", sNum);
             checkPermission(sNum, result);
         }
     }

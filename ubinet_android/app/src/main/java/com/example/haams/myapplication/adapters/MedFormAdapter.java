@@ -16,12 +16,14 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.haams.myapplication.MainActivity;
 import com.example.haams.myapplication.R;
 import com.example.haams.myapplication.data.MedForm;
 import com.example.haams.myapplication.database.DBHelper;
 import com.example.haams.myapplication.listener.ButtonClickListener;
 import com.example.haams.myapplication.server.Network;
 import com.example.haams.myapplication.server.Service;
+import com.example.haams.myapplication.sms.GuardNameStorage;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +47,7 @@ public class MedFormAdapter extends BaseAdapter implements View.OnClickListener 
     private Date endDate;
     private Network network;
     String medName;
+    GuardNameStorage guardNameStorage;
 
     private final String TAG = "MedFormAdapter";
     DBHelper dbhelper;
@@ -54,6 +57,7 @@ public class MedFormAdapter extends BaseAdapter implements View.OnClickListener 
     public MedFormAdapter(ArrayList<MedForm> medFormList, Context context) {
         this.medFormList = medFormList;
         this.context = context;
+        guardNameStorage = new GuardNameStorage(context);
         hours = new ArrayList<>();
         minutes = new ArrayList<>();
     }
@@ -106,7 +110,7 @@ public class MedFormAdapter extends BaseAdapter implements View.OnClickListener 
             @Override
             public void onClick(View v) {
                 medName = holder.medListEdt.getText().toString();
-                Toast.makeText(context,"약 이름 설정 완료",Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "약 이름 설정 완료", Toast.LENGTH_LONG).show();
                 Log.e(TAG + "약이름추가", medName);
             }
         });
@@ -135,18 +139,23 @@ public class MedFormAdapter extends BaseAdapter implements View.OnClickListener 
     // 약 이름 , 투약 알림 시간 ( 시 : (int) 1,2,3 / 분 : (int) 1,2,3 ) , 투약 시작 날짜 (Date startDate) , 투약 종료 날짜 (Date endDate) 입력 --> 서버 전송
     private void saveMedFormDataToServer(EditText medListEdt) {
         network = Network.getNetworkInstance();
+        String LTID = guardNameStorage.getUserLTID("LTID");
+        Log.e(TAG, "LTID : " + LTID);
         Log.i(TAG + ":" + "최종 확인", "[시]" + medListEdt.getText().toString() + "/" + hours.get(0) + "/" + hours.get(1) + "/" + hours.get(2)
                 + "[분]" + minutes.get(0) + "/" + minutes.get(1) + "/" + minutes.get(2) + "[시작 날짜]" + "[" + startDate + "]" +
                 "[종료 날짜]" + "[" + endDate + "]");
-        network.getMedProxy().setMedFormDataToServer(medName, hours, minutes, startDate, endDate, new Callback<MedForm>() {
+        network.getMedProxy().setMedFormDataToServer(LTID, medName, hours, minutes, startDate, endDate, new Callback<MedForm>() {
             @Override
             public void onResponse(Call<MedForm> call, Response<MedForm> response) {
-
+                if (response.isSuccessful()) {
+                    Log.i(TAG, response.body().toString() + "입니다.");
+                    context.startActivity(new Intent(context, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+                }
             }
 
             @Override
             public void onFailure(Call<MedForm> call, Throwable t) {
-
+                Log.e(TAG, "서버 전송 실패");
             }
         });
     }
