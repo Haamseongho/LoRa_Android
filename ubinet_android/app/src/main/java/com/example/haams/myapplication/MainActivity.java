@@ -229,17 +229,15 @@ public class MainActivity extends AppCompatActivity {
          */
         if (index == 1) {
             getLatLngByServer();
-            mIntent = new Intent(MainActivity.this, MapActivity.class);
-            mIntent.putExtra("lat",lat);
-            mIntent.putExtra("lng",lon);
+
             Log.i(TAG, "현재 위치");
         } else if (index == 2) {
             mIntent = new Intent(MainActivity.this, MapTrackActivity.class);
+            startActivity(mIntent);
             Log.i(TAG, "오늘 하루 경로");
         } else {
             Log.e(TAG, "인덱싱 에러(맵)");
         }
-        startActivity(mIntent);
     }
 
     private void getLatLngByServer() {
@@ -247,6 +245,7 @@ public class MainActivity extends AppCompatActivity {
         MapActivity로 이동하기 전 LTID 정보를 가지고 lat,lon 정보를 뽑아서 넘기기.
          */
         String LTID = guardNameStorage.getUserLTID("LTID");
+        Log.i(TAG,LTID+"입니다.");
         network = Network.getNetworkInstance();
         network.getUserProxy().getLatLngByLTIDFromServer(LTID, new Callback<User>() {
             @Override
@@ -256,6 +255,11 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG,response.body().toString()+" \n 사용자 정보입니다.");
                     lat = response.body().getLat();
                     lon = response.body().getLon();
+                    Log.i(TAG,lat+"/////"+lon);
+                    mIntent = new Intent(MainActivity.this, MapActivity.class);
+                    mIntent.putExtra("lat",lat);
+                    mIntent.putExtra("lng",lon);
+                    startActivity(mIntent);
                 }
             }
 

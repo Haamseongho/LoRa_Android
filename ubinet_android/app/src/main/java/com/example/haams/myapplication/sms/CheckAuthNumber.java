@@ -14,12 +14,20 @@ import android.widget.Toast;
 
 import com.example.haams.myapplication.MainActivity;
 import com.example.haams.myapplication.R;
+import com.example.haams.myapplication.data.Guard;
+import com.example.haams.myapplication.server.Network;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CheckAuthNumber extends AppCompatActivity {
 
     RandomAuthNumber randAuth;
     String authStr = "n";
     private static final String TAG = "CheckAuthNumber";
+    GuardNameStorage guardNameStorage;
+    Network network;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +38,7 @@ public class CheckAuthNumber extends AppCompatActivity {
     private void isAuthNumRight() {
 
         randAuth = new RandomAuthNumber(this);
+        guardNameStorage = new GuardNameStorage(this);
         final AlertDialog.Builder dlg = new AlertDialog.Builder(this);
         final View itemView = LayoutInflater.from(this).inflate(R.layout.activity_auth_number_box, null);
         dlg.setView(itemView);
@@ -61,6 +70,23 @@ public class CheckAuthNumber extends AppCompatActivity {
                      */
                     Intent smsIntent = new Intent(CheckAuthNumber.this,
                             MainActivity.class);
+
+                    String name = guardNameStorage.getUserName("guard_name");
+                    network = Network.getNetworkInstance();
+                    network.getGuardProxy().saveGuardNameToServer(name, new Callback<Guard>() {
+                        @Override
+                        public void onResponse(Call<Guard> call, Response<Guard> response) {
+                            if(response.isSuccessful()){
+                                Log.i(TAG,"사용자 정보 저장 완료");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Guard> call, Throwable t) {
+                            Log.e(TAG,t.toString());
+                        }
+                    });
+
 
                     smsIntent.putExtra("auth_index", 1);
                     smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -21,4 +21,8 @@ public class GuardProxy {
         Call<Guard> call = service.saveGuardInfoToServer(LTID,name);
         call.enqueue(callback);
     }
+    public void saveGuardNameToServer(String name,Callback<Guard> callback){
+        Call<Guard> call = service.loginGuardName(name);
+        call.enqueue(callback);
+    }
 }

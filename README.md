@@ -48,28 +48,49 @@
 
 # 4.  사용된 오픈소스 
 
+<a href="https://github.com/Haamseongho/ubinet_Server/tree/master/fb_login">
+### 안드로이드 관련 사용 오픈소스 : SNS로그인 - Facebook
+</a>
 
-Sns 활용 로그인 api : SNS( KakaoTalk / Facebook / Google ) (https://haamseongho.github.io/ubinet_Android/explain_oss/oss_sns_login.html)
-<hr />
+
+<a href="https://github.com/Haamseongho/ubinet_Server/tree/master/kk_login">
+### 안드로이드 관련 사용 오픈소스 : SNS로그인 - Kakao
+</a>
+
+(**	 위 내용은 서버 Repository에도 존재합니다. 	**)
+
+
+<br />
 
 
 # 5. 사용 라이브러리
 
 Download
 --------
-```xml
-<dependency>
-  <groupId>com.squareup.retrofit2</groupId>
-  <artifactId>retrofit</artifactId>
-  <version>2.3.0</version>
-</dependency>
-```
-or Gradle:
-```groovy
-compile 'com.squareup.retrofit2:retrofit:2.3.0'
 ```
 
-Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
+	[xml]
+	<dependency>
+  		<groupId>com.squareup.retrofit2</groupId>
+  		<artifactId>retrofit</artifactId>
+  		<version>2.3.0</version>
+	</dependency>
+
+
+```
+or Gradle:
+
+```
+
+	groovy
+	compile 'com.squareup.retrofit2:retrofit:2.3.0'
+
+
+```
+
+Snapshots of the development version are available in
+ 
+[Sonatype's `snapshots` repository][snap].
 
 Retrofit requires at minimum Java 7 or Android 2.3.
 
@@ -79,25 +100,32 @@ ProGuard
 
 If you are using ProGuard you might need to add the following options:
 ```
--dontwarn okio.**
--dontwarn javax.annotation.**
+
+	-dontwarn okio.**
+	-dontwarn javax.annotation.**
+
+
 ```
 
 
 # 6.  라이센스
 ```
-Copyright 2013 Square, Inc.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
 
-   http://www.apache.org/licenses/LICENSE-2.0
+	Copyright 2013 Square, Inc.
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+	
+	   http://www.apache.org/licenses/LICENSE-2.0
+	
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+	
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 ```
 
