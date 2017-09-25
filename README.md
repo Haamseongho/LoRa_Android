@@ -52,10 +52,15 @@
 ### 안드로이드 관련 사용 오픈소스 : SNS로그인 - Facebook
 </a>
 
+<br />
 
 <a href="https://github.com/Haamseongho/ubinet_Server/tree/master/kk_login">
 ### 안드로이드 관련 사용 오픈소스 : SNS로그인 - Kakao
 </a>
+
+
+<br />
+
 
 (**	 위 내용은 서버 Repository에도 존재합니다. 	**)
 
