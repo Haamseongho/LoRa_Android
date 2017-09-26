@@ -29,7 +29,7 @@
 
 # 2.  서비스 아키텍쳐
 ---
-<img src="./app_system.PNG"/>
+<img src="./app_system.png"/>
 
 <hr />
 
