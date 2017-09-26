@@ -1,7 +1,6 @@
-# Ubinet_Android_development 
-```
+
 #Ubinet 안드로이드 구성
-```
+
 >### 목차
 
 <hr /> 
