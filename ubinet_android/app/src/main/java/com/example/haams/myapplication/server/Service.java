@@ -56,10 +56,10 @@ public interface Service {
             @Field("endDate") Date endDate
     );
 
-    // LTID 전송 --> dynamicData 확인 // 위치 버튼 누를 때 LTID 보내서
+    // LTID 전송 --> dynamicData 확인 // 위치 버튼 누를 때 LTID 보내서    // up-link로 따로 받기 때문에 (위도,경도,맥박) 앱에서 보내야할 정보는
+
     // 유저 정보의 LTID와 dynamicData의 LTID 비교하고 일치하면
     // dynamicData의 정보들을 뽑아내서 사용자 정보 갱신할 것
-    // up-link로 따로 받기 때문에 (위도,경도,맥박) 앱에서 보내야할 정보는
     // LTID가 전부다.
 
     @FormUrlEncoded
@@ -72,5 +72,11 @@ public interface Service {
     public Call<User> getLatLngByLTIDFromServer(
             @Query("LTID") String LTID
             // LTID 보내서 위도 경도 뽑아오기 --> MapActivity.class에서 사용
+    );
+
+    @FormUrlEncoded
+    @POST("/guard/login")
+    public Call<Guard> loginGuardName(
+            @Field("name") String name
     );
 }
