@@ -79,7 +79,6 @@ public class IntroActivity extends AppCompatActivity {
         setContentView(R.layout.activity_intro);
         initViews();
         getSessionCallback();
-
     }
 
 
@@ -119,7 +118,6 @@ public class IntroActivity extends AppCompatActivity {
     private void initViews() {
         findViewById(R.id.btn_kakao_login).setOnClickListener(new ButtonClickListener(this));
         btnFacebookLogin = (LoginButton) findViewById(R.id.btn_facebook_login);
-
         initFaceBookLogin(); // 페이스북 연동 로그인 정리
     }
 
@@ -176,7 +174,7 @@ public class IntroActivity extends AppCompatActivity {
         btnAuth = (Button) itemView.findViewById(R.id.btn_check_isUser);
         edtAuthUser = (EditText) itemView.findViewById(R.id.dev_user_num);
 
-        guardNameStorage.saveUserName("guard_name",name);
+        guardNameStorage.saveUserName("guard_name", name);
         // 페이스북 로그인 후 이름 저장 .
 
         this.userName = name;
