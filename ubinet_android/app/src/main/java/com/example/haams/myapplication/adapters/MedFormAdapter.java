@@ -3,8 +3,12 @@ package com.example.haams.myapplication.adapters;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +25,8 @@ import com.example.haams.myapplication.MainActivity;
 import com.example.haams.myapplication.R;
 import com.example.haams.myapplication.data.MedForm;
 import com.example.haams.myapplication.database.DBHelper;
+import com.example.haams.myapplication.database.Database;
+import com.example.haams.myapplication.database.MySQLiteOpenHelper;
 import com.example.haams.myapplication.listener.ButtonClickListener;
 import com.example.haams.myapplication.server.Network;
 import com.example.haams.myapplication.server.Service;
@@ -49,10 +55,16 @@ public class MedFormAdapter extends BaseAdapter implements View.OnClickListener 
     private Network network;
     String medName;
     GuardNameStorage guardNameStorage;
-   
+
+
+    private MySQLiteOpenHelper helper;
+    String dbName = "mydb.db";
+    int dbVersion = 1;
+    private SQLiteDatabase db;
+
 
     private final String TAG = "MedFormAdapter";
-    DBHelper dbhelper;
+
     int index = 0;
     int index2 = 0;
 
@@ -60,6 +72,9 @@ public class MedFormAdapter extends BaseAdapter implements View.OnClickListener 
         this.medFormList = medFormList;
         this.context = context;
         guardNameStorage = new GuardNameStorage(context);
+
+
+
         hours = new ArrayList<>();
         minutes = new ArrayList<>();
     }
@@ -146,6 +161,16 @@ public class MedFormAdapter extends BaseAdapter implements View.OnClickListener 
         Log.i(TAG + ":" + "최종 확인", "[시]" + medListEdt.getText().toString() + "/" + hours.get(0) + "/" + hours.get(1) + "/" + hours.get(2)
                 + "[분]" + minutes.get(0) + "/" + minutes.get(1) + "/" + minutes.get(2) + "[시작 날짜]" + "[" + startDate + "]" +
                 "[종료 날짜]" + "[" + endDate + "]");
+
+        setMedListByLDB(medName,"[1]"+
+                hours.get(0) + ":" + minutes.get(0)
+                        + " / [2]" +
+                        hours.get(1) + ":" + minutes.get(1)
+                        + " / [3]" +
+                        hours.get(2) + ":" + minutes.get(2)
+                , startDate
+                , endDate);
+
         network.getMedProxy().setMedFormDataToServer(LTID, medName, hours, minutes, startDate, endDate, new Callback<MedForm>() {
             @Override
             public void onResponse(Call<MedForm> call, Response<MedForm> response) {
@@ -157,9 +182,33 @@ public class MedFormAdapter extends BaseAdapter implements View.OnClickListener 
 
             @Override
             public void onFailure(Call<MedForm> call, Throwable t) {
-                Log.e(TAG, "서버 전송 실패");
+                context.startActivity(new Intent(context, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
             }
         });
+    }
+
+    /*
+    확인 버튼 누를 때 SQLite에도 저장
+     */
+    private void setMedListByLDB(String medName, String times, Date startDate, Date endDate) {
+
+        helper = new MySQLiteOpenHelper(
+                context,
+                dbName,
+                null,
+                dbVersion
+        );
+        try{
+            db = helper.getWritableDatabase();
+        }catch (SQLiteException ex){
+            ex.printStackTrace();
+            Log.e(TAG,"DB 받을 수 없음");
+        }
+
+        String SQL = "INSERT INTO medTable4 VALUES (null,'" + medName + "','" + startDate + "','" + endDate + "','" + times + "');";
+        db.execSQL(SQL);
+        Log.i(TAG,"DB 값 저장 완료");
+        // DB 입력
     }
 
 

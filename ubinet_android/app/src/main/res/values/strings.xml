@@ -11,4 +11,9 @@
     <string name="google_map_api_key">AIzaSyCztwltn-9FPQ9kRQ6yc9Qop7AAXwtbf7o</string>
     <string name="MapBox_Access_token">pk.eyJ1IjoiaGFhbXNlb25naG8iLCJhIjoiY2o2aGFxM2dlMGxmbzJxbnk0MGY2NmMybiJ9.Leo0B1qKQLjUMkMjWjLIYg</string>
     <string name="btn_check_dev_user_num">디바이스 인증</string>
+    <string name="btn_logout">로그아웃</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="btn_check_medinfo">투약 알림 조회</string>
+    <string name="btn_set_medform">투약 알림 설정</string>
 </resources>

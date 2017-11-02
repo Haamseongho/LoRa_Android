@@ -53,10 +53,6 @@ public class ButtonClickListener implements View.OnClickListener {
                 setIndexMsg(1);
                 break;
 
-            case R.id.btn_spot_track:
-                setIndexMsg(2);
-                break;
-
             case R.id.btnSetAlarm:
                 setMedAlarm(context,medFormList, position);
                 break;
@@ -80,6 +76,4 @@ public class ButtonClickListener implements View.OnClickListener {
         indexingMsg = new IndexSendMsg(context);
         indexingMsg.savePreferences("index", n);
     }
-
-
 }

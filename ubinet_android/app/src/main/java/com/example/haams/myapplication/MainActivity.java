@@ -12,16 +12,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.haams.myapplication.data.Guard;
 import com.example.haams.myapplication.data.User;
 import com.example.haams.myapplication.listener.ButtonClickListener;
 import com.example.haams.myapplication.listener.IndexSendMsg;
 import com.example.haams.myapplication.server.Network;
+import com.example.haams.myapplication.server.firebase.MyFirebaseInstanceIDService;
 import com.example.haams.myapplication.sign_up.TokenStorage;
 import com.example.haams.myapplication.sms.GuardNameStorage;
 import com.example.haams.myapplication.sub_activities.MapActivity;
 import com.example.haams.myapplication.sub_activities.MapTrackActivity;
 import com.example.haams.myapplication.sub_activities.MedFormActivity;
+import com.example.haams.myapplication.sub_activities.MedListActivity;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.kakao.auth.Session;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
     Button btnSpots;
     @BindView(R.id.btn_medicate_form)
     Button btnMedicate;
-
+    @BindView(R.id.btn_logout)
+    Button btnLogOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+
+        getFcmToken();
         guardNameStorage = new GuardNameStorage(this);
         Log.i(TAG, guardNameStorage.getUserNumber("phone_number") + "//" + guardNameStorage.getUserName("guard_name"));
         final String phoneNum = guardNameStorage.getUserNumber("phone_number");
@@ -135,8 +144,38 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    private void checkForMedState(){
+        final View itemView = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_med_info_check,null);
+        final AlertDialog.Builder dlg2 = new AlertDialog.Builder(MainActivity.this);
+        dlg2.setView(itemView);
+        final Button btnSetMedForm = (Button)itemView.findViewById(R.id.btn_set_medform);
+        final Button btnCheckMedInfo = (Button)itemView.findViewById(R.id.btn_check_medinfo);
 
-    @OnClick({R.id.btn_spot_track, R.id.btn_medicate_form})
+        btnSetMedForm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                medicateInfoChecked();
+            }
+        });
+        /*
+        투약 알림 설정
+         */
+
+        btnCheckMedInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getBaseContext().startActivity(new Intent(MainActivity.this, MedListActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
+        });
+        /*
+        투약 알림 조회
+         */
+
+        dlg2.show();
+    }
+
+
+    @OnClick({R.id.btn_spot_track, R.id.btn_medicate_form , R.id.btn_logout})
     public void mainButtonClick(View v) {
         switch (v.getId()) {
             case R.id.btn_spot_track:
@@ -144,8 +183,16 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.btn_medicate_form:
-                medicateInfoChecked();
+                checkForMedState();
+
                 break;
+
+            case R.id.btn_logout:
+                Session.getCurrentSession().removeAccessToken();
+                Session.getCurrentSession().removeRefreshToken();
+                startActivity(new Intent(MainActivity.this,IntroActivity.class).setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+                break;
+
         }
     }
 
@@ -159,11 +206,7 @@ public class MainActivity extends AppCompatActivity {
             final View spotView = LayoutInflater.from(this).inflate(R.layout.activity_spot_info_check, null);
             final Button btnSpotNow, btnSpotTrack;
             btnSpotNow = (Button) spotView.findViewById(R.id.btn_spot_now);
-            btnSpotTrack = (Button) spotView.findViewById(R.id.btn_spot_track);
-
             btnSpotNow.setOnClickListener(new ButtonClickListener(spotView.getContext()));
-            btnSpotTrack.setOnClickListener(new ButtonClickListener(spotView.getContext()));
-
             indexingMsg = new IndexSendMsg(spotView.getContext());
 
 
@@ -238,6 +281,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.e(TAG, "인덱싱 에러(맵)");
         }
+    }
+
+    private void getFcmToken(){
+        MyFirebaseInstanceIDService myFirebaseInstanceIDService = new MyFirebaseInstanceIDService();
+        myFirebaseInstanceIDService.onTokenRefresh();
+        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        // topic 으로 받기
+
+        FirebaseInstanceId.getInstance().getToken();
+        Log.i(TAG,FirebaseInstanceId.getInstance().getToken());
     }
 
     private void getLatLngByServer() {
