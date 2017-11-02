@@ -24,7 +24,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createSQL = "CREATE TABLE medTable (_id INTEGER PRIMARY KEY AUTOINCREMENT, medName TEXT, hour INTEGER, minute INTEGER, startDate VARCHAR, endDate VARCHAR);";
+        String createSQL = "CREATE TABLE medTable2 (_id INTEGER PRIMARY KEY AUTOINCREMENT, medName TEXT, startDate VARCHAR, endDate VARCHAR , medTimes VARCHAR);";
         db.execSQL(createSQL);
     }
 
@@ -35,15 +35,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void insertMedName(String medName) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO medTable VALUES(null, '" + medName + "','" + null + "','" + null + "','" + null + "','" + null + "');");
+        db.execSQL("INSERT INTO medTable2 VALUES(null, '" + medName + "','" + null + "','" + null + "','" + null + "','" + null + "');");
         db.close();
     }
 
     public void insertMedForm(String medName, int[] hours, int[] minutes, String startDate, String endDate) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO medTable VALUES(null,'" + medName + "','" + hours + "','" + minutes + "','" + startDate + "','" + endDate + "');");
+        db.execSQL("INSERT INTO medTable2 VALUES(null,'" + medName + "','" + hours + "','" + minutes + "','" + startDate + "','" + endDate + "');");
         db.close();
     }
+
+    public void saveMedList(String medName,String medSrtDate,String medEndDate,String medTimes){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("INSERT INTO medTable2 VALUES(null,'" + medName+"','"+medSrtDate+"','"+medEndDate+"','"+medTimes+"');");
+        db.close();
+    }
+
+
 
 /*
     public void updateMedForm(String medName, int time, int date) {
@@ -57,7 +65,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public String selectMedDataByName(String medName) {
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM medTable WHERE medName= '" + medName + "'", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM medTables WHERE medName= '" + medName + "'", null);
         String result = "";
         while (cursor.moveToNext()) {
             result += "약 이름:" + cursor.getString(1) + "\n"
