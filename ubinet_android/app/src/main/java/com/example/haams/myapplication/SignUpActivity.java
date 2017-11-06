@@ -205,9 +205,9 @@ public class SignUpActivity extends AppCompatActivity {
         }, new IntentFilter("SMS_DELIVERED_ACTION"));
         SmsManager mSmsMAnager = SmsManager.getDefault();
         mSmsMAnager.sendTextMessage(sNum, null,
+
                 "다음은 디바이스 사용자 확인 인증 과정 입니다. " +
                         "인증 번호 6자리를 입력해주세요" + "  " + authNum[0] + authNum[1] + authNum[2] + authNum[3] + authNum[4] + authNum[5],
-
                 sentIntent, deliveryIntent);
 
     }

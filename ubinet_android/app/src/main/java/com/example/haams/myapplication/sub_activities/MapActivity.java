@@ -2,6 +2,7 @@ package com.example.haams.myapplication.sub_activities;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.haams.myapplication.MainActivity;
 import com.example.haams.myapplication.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -169,5 +171,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lon), 16));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
         //googleMap.moveCamera(CameraUpdateFactory.newLatLng());
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(MapActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+        super.onBackPressed();
     }
 }

@@ -1,9 +1,11 @@
 package com.example.haams.myapplication.sub_activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 
+import com.example.haams.myapplication.MainActivity;
 import com.example.haams.myapplication.R;
 import com.example.haams.myapplication.adapters.MedFormAdapter;
 import com.example.haams.myapplication.data.MedForm;
@@ -55,5 +57,11 @@ public class MedFormActivity extends AppCompatActivity {
         medFormList.add(new MedForm("약 이름1", hours, minutes, startDate, endDate));
         medFormAdapter = new MedFormAdapter(medFormList, this);
         medList.setAdapter(medFormAdapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(MedFormActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY));
+        super.onBackPressed();
     }
 }

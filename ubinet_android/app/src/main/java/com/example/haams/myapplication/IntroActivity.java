@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
@@ -23,12 +24,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.haams.myapplication.adapters.MpicPagerAdapter;
 import com.example.haams.myapplication.listener.ButtonClickListener;
 import com.example.haams.myapplication.sign_up.CustomUtils;
 import com.example.haams.myapplication.sign_up.TokenStorage;
 import com.example.haams.myapplication.sms.GuardNameStorage;
+import com.example.haams.myapplication.sms.RandomAuthNumber;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -72,6 +77,8 @@ public class IntroActivity extends AppCompatActivity {
     private CallbackManager callbackManager; // Facebook Session 관리 매니저
     private TokenStorage tokenStorage; // 각 SNS 세션의 Token SharedPreference에 저장 (임시 저장소)
     private GuardNameStorage guardNameStorage;
+
+    private ViewPager mvPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +125,20 @@ public class IntroActivity extends AppCompatActivity {
     private void initViews() {
         findViewById(R.id.btn_kakao_login).setOnClickListener(new ButtonClickListener(this));
         btnFacebookLogin = (LoginButton) findViewById(R.id.btn_facebook_login);
+        mvPager = (ViewPager) findViewById(R.id.mvPager);
+
+        /*
+        Adapter
+         */
+        MpicPagerAdapter mpicPagerAdapter = new MpicPagerAdapter(getLayoutInflater());
+        mvPager.setAdapter(mpicPagerAdapter);
+
+
+        /*
+        Banner
+         */
+
+
         initFaceBookLogin(); // 페이스북 연동 로그인 정리
     }
 
@@ -235,9 +256,23 @@ public class IntroActivity extends AppCompatActivity {
     private void auth_msg_send_to_User(String sNum, String userName) {
 
         Log.i(TAG, userName.toString());
+        int[] authNum = new int[6];
+        String authStr = "n";
 
         PendingIntent sentIntent = PendingIntent.getBroadcast(this, PERMISSION_SEND_SMS, new Intent("SMS_SENT_INTENT"), 0);
         PendingIntent deliveryIntent = PendingIntent.getBroadcast(this, PERMISSION_SEND_SMS, new Intent("SMS_DELIVERED_ACTION"), 0);
+
+        for (int i = 0; i < authNum.length; i++) {
+            authNum[i] = (int) (Math.random() * 10);
+            authStr = authStr + authNum[i];
+        }
+
+        RandomAuthNumber randAuth = new RandomAuthNumber(this);
+        randAuth.saveAuthRandNum("authNum", authStr);
+        Log.e(TAG, "authNum = " + authStr);
+        Log.e(TAG, randAuth.getAuthRandNum("authNum"));
+
+
 
         /*
         sendSMS_registerReceiver
@@ -279,7 +314,8 @@ public class IntroActivity extends AppCompatActivity {
         }, new IntentFilter("SMS_DELIVERED_ACTION"));
         SmsManager mSmsMAnager = SmsManager.getDefault();
         mSmsMAnager.sendTextMessage(sNum, null,
-                "사용자 인증 과정 중입니다. 디바이스 사용자라면 확인 버튼을 눌러주세요",
+                "다음은 디바이스 사용자 확인 인증 과정 입니다. " +
+                        "인증 번호 6자리를 입력해주세요" + "  " + authNum[0] + authNum[1] + authNum[2] + authNum[3] + authNum[4] + authNum[5],
                 sentIntent, deliveryIntent);
 
     }
