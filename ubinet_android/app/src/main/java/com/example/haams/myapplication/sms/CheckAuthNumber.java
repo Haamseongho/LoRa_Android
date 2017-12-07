@@ -89,8 +89,8 @@ public class CheckAuthNumber extends AppCompatActivity {
 
 
                     smsIntent.putExtra("auth_index", 1);
-                    smsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(smsIntent);
+                    finish();
 
                 } else {
                     Toast.makeText(CheckAuthNumber.this, "인증번호가 틀립니다.", Toast.LENGTH_LONG).show();

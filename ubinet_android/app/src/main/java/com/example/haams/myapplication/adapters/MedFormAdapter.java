@@ -164,9 +164,9 @@ public class MedFormAdapter extends BaseAdapter implements View.OnClickListener 
 
         setMedListByLDB(medName,"[1]"+
                 hours.get(0) + ":" + minutes.get(0)
-                        + " / [2]" +
+                        + " \n [2]" +
                         hours.get(1) + ":" + minutes.get(1)
-                        + " / [3]" +
+                        + " \n [3]" +
                         hours.get(2) + ":" + minutes.get(2)
                 , startDate
                 , endDate);

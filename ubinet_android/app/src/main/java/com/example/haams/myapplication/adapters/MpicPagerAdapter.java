@@ -38,9 +38,7 @@ public class MpicPagerAdapter extends PagerAdapter {
         view = inflater.inflate(R.layout.activity_child_bannerview, null);
         ImageView img = (ImageView) view.findViewById(R.id.mbanner1);
         Glide.with(view.getContext())
-                .load(R.drawable.old_man + (position + 2)).centerCrop()
-                .crossFade(1000)
-                .skipMemoryCache(true)
+                .load(R.drawable.old_man + (position + 2))
                 .into(img);
         container.addView(view);
 

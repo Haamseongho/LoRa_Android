@@ -277,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (index == 2) {
             mIntent = new Intent(MainActivity.this, MapTrackActivity.class);
             startActivity(mIntent);
+            finish();
             Log.i(TAG, "오늘 하루 경로");
         } else {
             Log.e(TAG, "인덱싱 에러(맵)");
@@ -313,6 +314,7 @@ public class MainActivity extends AppCompatActivity {
                     mIntent.putExtra("lat",lat);
                     mIntent.putExtra("lng",lon);
                     startActivity(mIntent);
+                    finish();
                 }
             }
 
@@ -327,5 +329,6 @@ public class MainActivity extends AppCompatActivity {
 
         mIntent = new Intent(MainActivity.this, MedFormActivity.class);
         startActivity(mIntent);
+        finish();
     }
 }

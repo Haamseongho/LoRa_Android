@@ -225,6 +225,7 @@ public class SignUpActivity extends AppCompatActivity {
         final Intent intent = new Intent(this, IntroActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
+        finish();
     }
 
     private void redirectMainActivity(UserProfile result) {
